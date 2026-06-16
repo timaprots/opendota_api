@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../models/hero_model.dart';
 import '../services/opendota_service.dart';
+import '../repositories/hero_repository.dart';
+import '../services/hive_service.dart';
 import 'hero_detail_screen.dart';
 
 class HeroListScreen extends StatefulWidget {
@@ -14,12 +15,18 @@ class HeroListScreen extends StatefulWidget {
 class _HeroListScreenState extends State<HeroListScreen> {
   final OpenDotaService service = OpenDotaService();
 
+  late HeroRepository repository;
   late Future<List<HeroModel>> heroesFuture;
 
   @override
   void initState() {
     super.initState();
-    heroesFuture = service.getHeroes();
+    repository = HeroRepository(
+      api: OpenDotaService(),
+      cache: HiveService(),
+    );
+
+    heroesFuture = repository.getHeroes();
   }
 
   @override
@@ -40,9 +47,32 @@ class _HeroListScreenState extends State<HeroListScreen> {
 
           if (snapshot.hasError) {
             return Center(
-              child: Text(
-                "Błąd:\n${snapshot.error}",
-                textAlign: TextAlign.center,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Nie udało się pobrać danych.",
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          heroesFuture =
+                              repository.getHeroes();
+                        });
+                      },
+                      child: const Text("Spróbuj ponownie"),
+                    ),
+                  ],
+                ),
               ),
             );
           }

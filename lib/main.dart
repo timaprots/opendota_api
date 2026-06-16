@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-
+import 'package:hive_flutter/hive_flutter.dart';
 import 'screens/hero_list_screen.dart';
 
-void main() {
+void main() async {
+  runApp(const DotaStatsApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+
   runApp(const DotaStatsApp());
 }
 

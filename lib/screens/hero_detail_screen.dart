@@ -46,33 +46,23 @@ class HeroDetailScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 Text(
                   "Primary Attribute: ${getAttribute(hero.primaryAttr)}",
                 ),
-
                 const SizedBox(height: 10),
-
                 Text(
                   "Attack Type: ${hero.attackType}",
                 ),
-
                 const SizedBox(height: 10),
-
                 Text(
                   "Professional Picks: ${hero.proPick}",
                 ),
-
                 const SizedBox(height: 10),
-
                 Text(
                   "Professional Wins: ${hero.proWins}",
                 ),
-
                 const SizedBox(height: 10),
-
                 Text(
                   "Win Rate: ${hero.winRate.toStringAsFixed(2)}%",
                 ),
