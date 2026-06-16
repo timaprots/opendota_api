@@ -38,4 +38,18 @@ class HeroRepository {
       rethrow;
     }
   }
+
+  Future<void> toggleFavorite(int heroId) async {
+    final isFav = await cache.isFavorite(heroId);
+
+    if (isFav) {
+      await cache.removeFavorite(heroId);
+    } else {
+      await cache.addFavorite(heroId);
+    }
+  }
+
+  Future<List<int>> getFavoritesIds() {
+    return cache.getFavorites();
+  }
 }

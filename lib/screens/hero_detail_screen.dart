@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
 import '../models/hero_model.dart';
+import '../services/hive_service.dart';
 
 class HeroDetailScreen extends StatelessWidget {
   final HeroModel hero;
+  final HiveService hive = HiveService();
 
-  const HeroDetailScreen({
+  HeroDetailScreen({
     super.key,
     required this.hero,
   });
@@ -70,6 +71,18 @@ class HeroDetailScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await hive.addFavorite(hero.id);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Dodano do ulubionych"),
+            ),
+          );
+        },
+        child: const Icon(Icons.favorite),
       ),
     );
   }
