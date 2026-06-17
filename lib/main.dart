@@ -16,7 +16,7 @@ void main() async {
   );
   FlutterError.onError =
       FirebaseCrashlytics.instance.recordFlutterFatalError;
-  
+
   runApp(const DotaStatsApp());
 }
 

@@ -1,17 +1,40 @@
-# opendota_api
+# 📱 OpenDota Heroes App
 
-OpenDota API
+Flutter application that displays information about Dota 2 heroes using the OpenDota API.  
+The app includes caching, favorites system, statistics visualization and basic analytics tracking.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+### Heroes list
+- Displays all Dota 2 heroes
+- Data fetched from OpenDota API
+- Cached locally using Hive for faster loading
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+### Hero details
+- Detailed information about each hero
+- Win rate, pro picks and pro wins
+- Hero image and attributes
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Favorites system
+- Add/remove heroes from favorites
+- Stored locally using Hive database
+- Separate Favourites screen
+
+### Statistics
+- Top heroes based on:
+    - Win rate
+    - Pro picks
+    - Pro wins
+
+### Analytics
+- Firebase Analytics integration
+- Tracks user actions such as:
+    - opening heroes list
+    - opening hero details
+    - refreshing data
+
+### Crash testing
+- Firebase Crashlytics integration
+- Manual crash button for testing reporting system
