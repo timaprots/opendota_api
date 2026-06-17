@@ -4,6 +4,7 @@ import '../services/opendota_service.dart';
 import '../repositories/hero_repository.dart';
 import '../services/hive_service.dart';
 import 'hero_detail_screen.dart';
+import '../services/analytics.dart';
 
 class HeroListScreen extends StatefulWidget {
   const HeroListScreen({super.key});
@@ -13,8 +14,7 @@ class HeroListScreen extends StatefulWidget {
 }
 
 class _HeroListScreenState extends State<HeroListScreen> {
-  final OpenDotaService service = OpenDotaService();
-
+  final HiveService hive = HiveService();
   late HeroRepository repository;
   late Future<List<HeroModel>> heroesFuture;
 
@@ -34,6 +34,16 @@ class _HeroListScreenState extends State<HeroListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dota Heroes"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                heroesFuture = repository.getHeroes();
+              });
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<List<HeroModel>>(
         future: heroesFuture,
@@ -79,29 +89,58 @@ class _HeroListScreenState extends State<HeroListScreen> {
 
           final heroes = snapshot.data!;
 
-          return ListView.builder(
-            itemCount: heroes.length,
-            itemBuilder: (context, index) {
-              final hero = heroes[index];
+          return RefreshIndicator(
+            onRefresh: () async {
+              Analytics.log("heroes_refreshed");
+              setState(() {
+                heroesFuture = repository.getHeroes();
+              });
 
-              return ListTile(
-                leading: CircleAvatar(
-                  child: Text(hero.id.toString()),
-                ),
-                title: Text(hero.localizedName),
-                subtitle: Text(hero.attackType),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          HeroDetailScreen(hero: hero),
-                    ),
-                  );
-                },
-              );
+              await heroesFuture;
             },
+            child: ListView.builder(
+              itemCount: heroes.length,
+              itemBuilder: (context, index) {
+                final hero = heroes[index];
+
+                return FutureBuilder<bool>(
+                  future: hive.isFavorite(hero.id),
+                  builder: (context, snapshot) {
+                    final isFav = snapshot.data ?? false;
+
+                    return ListTile(
+                      title: Text(hero.localizedName),
+                      subtitle: Text(hero.attackType),
+
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HeroDetailScreen(hero: hero),
+                          ),
+                        );
+                      },
+
+                      trailing: IconButton(
+                        icon: Icon(
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav ? Colors.red : null,
+                        ),
+                        onPressed: () async {
+                          if (isFav) {
+                            await hive.removeFavorite(hero.id);
+                          } else {
+                            await hive.addFavorite(hero.id);
+                          }
+
+                          setState(() {});
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           );
         },
       ),

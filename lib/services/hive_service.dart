@@ -26,7 +26,7 @@ class HiveService {
 
   Future<List<int>> getFavorites() async {
     final box = await Hive.openBox(favoritesBox);
-    return box.values.cast<int>().toList();
+    return box.keys.cast<int>().toList();
   }
 
   Future<bool> isFavorite(int heroId) async {

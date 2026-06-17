@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/hero_model.dart';
 import '../services/hive_service.dart';
+import '../services/analytics.dart';
 
 class HeroDetailScreen extends StatelessWidget {
   final HeroModel hero;
@@ -26,6 +27,7 @@ class HeroDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Analytics.log("hero_opened");
     return Scaffold(
       appBar: AppBar(
         title: Text(hero.localizedName),
@@ -40,6 +42,11 @@ class HeroDetailScreen extends StatelessWidget {
               crossAxisAlignment:
               CrossAxisAlignment.start,
               children: [
+                Image.network(
+                  hero.imageUrl,
+                  height: 180,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported),
+                ),
                 Text(
                   hero.localizedName,
                   style: const TextStyle(
@@ -74,13 +81,25 @@ class HeroDetailScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await hive.addFavorite(hero.id);
+          final hive = HiveService();
+          final isFav = await hive.isFavorite(hero.id);
+          if (isFav) {
+            await hive.removeFavorite(hero.id);
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Dodano do ulubionych"),
-            ),
-          );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Usunięto z ulubionych"),
+              ),
+            );
+          } else {
+            await hive.addFavorite(hero.id);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Dodano do ulubionych"),
+              ),
+            );
+          }
         },
         child: const Icon(Icons.favorite),
       ),

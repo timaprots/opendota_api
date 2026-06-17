@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'screens/hero_list_screen.dart';
 import 'screens/favourites_screen.dart';
 import 'widgets/bottom_nav.dart';
+import 'screens/stats_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +37,7 @@ class _RootPageState extends State<RootPage> {
   final pages = const [
     HeroListScreen(),
     FavoritesScreen(),
+    StatsScreen(),
   ];
 
   @override

@@ -33,4 +33,9 @@ class HeroModel {
     if (proPick == 0) return 0;
     return (proWins / proPick) * 100;
   }
+
+  String get imageUrl {
+    final file = img.split('/').last;
+    return "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/$file";
+  }
 }

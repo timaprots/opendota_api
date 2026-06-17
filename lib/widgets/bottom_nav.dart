@@ -24,6 +24,10 @@ class BottomNav extends StatelessWidget {
           icon: Icon(Icons.favorite),
           label: "Favorites",
         ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.bar_chart),
+          label: "Stats",
+        ),
       ],
     );
   }

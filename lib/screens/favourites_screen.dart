@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/hero_model.dart';
 import '../services/hive_service.dart';
+import '../services/analytics.dart';
+import 'hero_detail_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -18,6 +20,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   void initState() {
     super.initState();
+    Analytics.log("favourite_opened");
     loadFavorites();
   }
 
@@ -59,6 +62,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             leading: const Icon(Icons.favorite),
             title: Text(hero.localizedName),
             subtitle: Text(hero.attackType),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => HeroDetailScreen(hero: hero),
+                ),
+              );
+            },
           );
         },
       ),
