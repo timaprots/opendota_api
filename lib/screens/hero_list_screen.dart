@@ -5,6 +5,7 @@ import '../repositories/hero_repository.dart';
 import '../services/hive_service.dart';
 import 'hero_detail_screen.dart';
 import '../services/analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class HeroListScreen extends StatefulWidget {
   const HeroListScreen({super.key});
@@ -15,18 +16,29 @@ class HeroListScreen extends StatefulWidget {
 
 class _HeroListScreenState extends State<HeroListScreen> {
   final HiveService hive = HiveService();
+  Set<int> favoriteIds = {};
   late HeroRepository repository;
   late Future<List<HeroModel>> heroesFuture;
+
+  Future<void> loadFavorites() async {
+    final favs = await hive.getFavorites();
+
+    setState(() {
+      favoriteIds = favs.toSet();
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    Analytics.log("hero_list_opened");
     repository = HeroRepository(
       api: OpenDotaService(),
       cache: HiveService(),
     );
 
     heroesFuture = repository.getHeroes();
+    loadFavorites();
   }
 
   @override
@@ -38,9 +50,19 @@ class _HeroListScreenState extends State<HeroListScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
+              Analytics.log("heroes_refreshed");
               setState(() {
                 heroesFuture = repository.getHeroes();
               });
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.warning),
+            onPressed: () {
+              FirebaseCrashlytics.instance.recordError(
+                  Exception("Test crash"),
+                  StackTrace.current,
+              );
             },
           ),
         ],
@@ -103,41 +125,36 @@ class _HeroListScreenState extends State<HeroListScreen> {
               itemBuilder: (context, index) {
                 final hero = heroes[index];
 
-                return FutureBuilder<bool>(
-                  future: hive.isFavorite(hero.id),
-                  builder: (context, snapshot) {
-                    final isFav = snapshot.data ?? false;
+                final isFav = favoriteIds.contains(hero.id);
 
-                    return ListTile(
-                      title: Text(hero.localizedName),
-                      subtitle: Text(hero.attackType),
+                return ListTile(
+                  title: Text(hero.localizedName),
+                  subtitle: Text(hero.attackType),
 
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => HeroDetailScreen(hero: hero),
-                          ),
-                        );
-                      },
-
-                      trailing: IconButton(
-                        icon: Icon(
-                          isFav ? Icons.favorite : Icons.favorite_border,
-                          color: isFav ? Colors.red : null,
-                        ),
-                        onPressed: () async {
-                          if (isFav) {
-                            await hive.removeFavorite(hero.id);
-                          } else {
-                            await hive.addFavorite(hero.id);
-                          }
-
-                          setState(() {});
-                        },
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => HeroDetailScreen(hero: hero),
                       ),
                     );
                   },
+
+                  trailing: IconButton(
+                    icon: Icon(
+                      isFav ? Icons.favorite : Icons.favorite_border,
+                      color: isFav ? Colors.red : null,
+                    ),
+                    onPressed: () async {
+                      if (isFav) {
+                        await hive.removeFavorite(hero.id);
+                      } else {
+                        await hive.addFavorite(hero.id);
+                      }
+
+                      await loadFavorites();
+                    },
+                  ),
                 );
               },
             ),

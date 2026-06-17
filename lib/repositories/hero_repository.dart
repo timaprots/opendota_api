@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import '../models/hero_model.dart';
 import '../services/hive_service.dart';
 import '../services/opendota_service.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class HeroRepository {
   final OpenDotaService api;
@@ -21,10 +21,27 @@ class HeroRepository {
 
       final List decoded = jsonDecode(rawData);
 
+      if (decoded is! List) {
+        throw Exception("API nie zwróciło listy");
+      }
+
+/*      return decoded
+          .map((e) => HeroModel.fromJson(e))
+          .toList();
+    } catch (error, stackTrace) {
+      await FirebaseCrashlytics.instance.recordError(
+        error,
+        stackTrace,
+        reason: "OpenDota API / Cache error",
+      );
+*/
+
       return decoded
           .map((e) => HeroModel.fromJson(e))
           .toList();
-    } catch (_) {
+    } catch (e) {
+      print("ERROR: $e");
+
       final cached = await cache.getHeroes();
 
       if (cached != null) {

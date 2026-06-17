@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../services/hive_service.dart';
 import '../models/hero_model.dart';
+import '../services/analytics.dart';
 
 enum StatType {
   winRate,
@@ -27,6 +28,7 @@ class _StatsScreenState extends State<StatsScreen> {
   void initState() {
     super.initState();
     loadData();
+    Analytics.log("stats_opened");
   }
 
   Future<void> loadData() async {

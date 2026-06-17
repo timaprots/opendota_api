@@ -4,11 +4,19 @@ import 'screens/hero_list_screen.dart';
 import 'screens/favourites_screen.dart';
 import 'widgets/bottom_nav.dart';
 import 'screens/stats_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'firebase_options.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FlutterError.onError =
+      FirebaseCrashlytics.instance.recordFlutterFatalError;
+  
   runApp(const DotaStatsApp());
 }
 

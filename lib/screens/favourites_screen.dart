@@ -25,8 +25,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   Future<void> loadFavorites() async {
-    final raw = await hive.getHeroes();
     final favIds = await hive.getFavorites();
+    final raw = await hive.getHeroes();
 
     if (raw == null) return;
 

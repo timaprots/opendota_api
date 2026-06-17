@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "671257003910",
+    "project_id": "dotaapp-f1a80",
+    "storage_bucket": "dotaapp-f1a80.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671257003910:android:035a5727e614c8d2a78e07",
+        "android_client_info": {
+          "package_name": "com.protsenko.opendota_api"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2HY84eK0GA39Y-Rbefv0NnRhFS5hcv-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
